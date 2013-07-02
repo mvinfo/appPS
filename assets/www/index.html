@@ -1,0 +1,276 @@
+<!DOCTYPE html> 
+<html> 
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+      <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+      <script type="text/javascript" src="js/jquery.mobile-1.3.0.min.js"></script>
+      <script type="text/javascript" src="js/cordova-2.7.0.js"> </script>
+      <script type="text/javascript" src="js/geoLocation.js"></script>
+      <script type="text/javascript" src="js/CRUDCadastro.js"></script>
+	  <script type="text/javascript" src="js/Cadastro.js"></script>
+      <script type="text/javascript" src="js/Camera.js"></script>
+      <link rel="stylesheet" href="js/jquery.mobile-1.3.0.min.css"/>
+	</head> 
+   <body onload="onInit(); init();">
+
+<!--===============================================================================================================-->
+    <div data-role="page" data-title="Sobre" id="sobre">
+        <div data-role="header" data-theme="a">
+            <h5>
+                APP de Pesquisa de Demanda para Postos de Saúde
+            </h5>
+        </div>
+        <div data-role="content" align="center">
+            <p align="center" style="font-family:impact; font-size:20px;">
+                PROJETO
+            </p>
+            <p align="justify" style="width: 56%;">
+                A app desenvolvida será utilizada pelas prefeituras para o cadastramentos dos usuários que utilizam postos de saúde.<br>
+                O sistema irá cadastrar os dados e  calculará a distância em que estes usuários encontram-se do posto de saúde mais
+                próximo de sua casa. Permitirá ainda fotografar o imóvel do usuário para registrar possíveis focos de doenças como a dengue.<br>
+                De posse destes dados a prefeitura terá uma estatística da demanda que este posto de saúde está tendo, e analizará a
+                necessidade ou não da ampliação ou construção de um novo.
+            </p><br><br>
+
+            <p align="center" style="font-family:impact; font-size:20px;">
+                IMPLEMENTAÇÃO
+
+            </p>
+            <p align="justify" style="width: 56%;">
+                A app fez uso das tecnologias abaixo:<br><br>
+                HTML5, jquery Mobile e JavaScript =  para o design e manipulação dos eventos da aplicação.<br>
+                SQLite = para armazenamento dos dados cadastrais e as coordenadas de latitude e longitude dos usuários.<br>
+                Geolocation, Câmera = sensores.<br>
+            </p>
+        </div>
+ 		<div  data-role="footer" data-theme="b" align="center">
+            <a href="#principal" data-transition="fade">Menu Principal</a>
+        </div>
+    </div>
+
+<!--===============================================================================================================-->
+	<div data-role="page" data-title="Principal" id="principal">
+ 		<div data-role="header" data-theme="a">
+			<h5>
+				Pesquisa de Demanda para Postos de Sáude
+			</h5>
+            <a data-role="button" href="#sobre" data-icon="about" data-transition="fade" class="ui-btn-right"> Sobre </a>
+		</div>
+
+        <div id="cto"  data-role="content" data-theme="b">
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider">MENU</li>
+				<li data-theme="c"><a href="#formulario" data-transition="pop">Cadastramento de Usuário</a></li>
+				<li data-theme="c"><a href="#PS" data-transition="pop">Cadastro de Posto de Saúde</a></li>
+                <li data-theme="c"><a href="#camera" data-trasition="pop">Câmera</a>
+			</ul>
+        </div>
+
+ 		<div  data-role="footer" data-theme="b">
+			<a href="#page3" data-transition="flip">Mauricio Vicente</a>
+		</div>
+    </div>
+
+<!--===============================================================================================================-->
+    <div data-role="page" data-title="Posto Saúde" id="PS">
+ 		<div data-role="header" data-theme="a">
+            <a href="#prncipal" data-rel="back" data-transition="flip"> Voltar </a>
+			<h5>
+				Cadastro de Posto de Saúde
+			</h5>
+            <a data-role="button" href="#principal" data-icon="home" data-transition="flip"> Principal </a>
+		</div>
+
+        <div id="cto"  data-role="content" data-theme="b">
+            <form method="post" id="frmCadastro">
+                <div id="frm" data-role="fieldcontain">
+                    <fieldset id="fs"  style="width:100%">
+                        <label for="nomePS" style="width:90px">Nome Posto</label>
+                        <input name="nomePS" id="nomePS" value="" type="text" autofocus/><br>
+                        <label for="lat" style="width:90px">Latitude</label>
+                        <input name="lat" id="lat" value="" type="number"/><br>
+                        <label for="long" style="width:90px">Longitude</label>
+                        <input name="long" id="long" value="" type="number"/><br>
+                        <input id="id" value="" type="hidden" disabled="true" hidden="true"/><br>
+                    </fieldset>
+                </div>
+                <div data-position="inline" style="width:100%; background-color:gray;">
+                    <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Novo" onclick="onNewPS()">
+                    <input type="button" class="ui-btn-right" data-theme="b" name="create" value="Salvar" onclick="onInsertPS()">
+                    <input type="button" class="ui-btn-right" data-theme="b" id="btnAtualizar" value="Atualizar" onclick="onUpdatePS()">
+                    <input type="button" class="ui-btn-right" data-theme="b" id="btnExcluir" value="Excluir" onclick="onDeletePS()">
+                    <input type="button" class="ui-btn-right" data-theme="c" id="btnLocPS" value="Pegar coordenadas" onclick="onDeviceReady()">
+                </div>
+                <br>
+                <h3>Lista de Postos cadastrados:</h3>
+                <ul id="itemDataPS" style="cursor:pointer;">
+                  <li id="2" class="dataPS" onclick="onSelectPS(this)"></li>
+                  <!--<li id="3" class="dataPS" onclick="onSelectPS(this)">teste x 44</li>-->
+                </ul>
+                </br>
+                <div id="statusPS" style="background-color:blue; color: red; position:absolute; width:1410px">
+                </div> <br/>
+            </form>
+        </div>
+		<div  data-role="footer" data-theme="b">
+			<a href= "#page3" data-transition="flip">Mauricio Vicente</a>
+		</div>
+    </div>
+
+<!--===============================================================================================================-->
+    <div data-role="page" data-title="Formulário" id="formulario">
+ 		<div data-role="header" data-theme="a">
+            <a href="#prncipal" data-rel="back" data-transition="flip"> Voltar </a>
+			<h5>
+				Cadastro de Usuários do PS
+			</h5>
+            <a data-role="button" href="#principal" data-icon="home" data-transition="flip"> Principal </a>
+		</div>
+
+        <div id="cto"  data-role="content" data-theme="b">
+            <form method="post" id="frmCadastro">
+                <div id="frm" data-role="fieldcontain">
+                    <fieldset id="fs"  style="width:100%">
+                        <input id="posto" values="" type="hidden"/>
+                        <label for="nome" style="width:90px">Nome</label>
+                        <input name="nome" id="nome" value="" type="text" autofocus/><br>
+                        <label for="endereco" style="width:90px">Endereço</label>
+                        <input name="endereco" id="endereco" value="" type="text"/><br>
+                        <label for="numero" style="width:90px">Número</label>
+                        <input name="numero" id="numero" value="" type="text"/><br>
+                        <label for="bairro" style="width:90px">Bairro</label>
+                        <input name="bairro" id="bairro" value="" type="text"/><br>
+                        <label for="cidade" style="width:90px">Cidade</label>
+                        <input name="cidade" id="cidade" value="" type="text"/><br>
+                        <div style="width:8.7%; float:left;">
+                            <label for="estado">UF</label>
+                        </div>
+                        <div style="width:100%; ">
+                            <select name="estado" id="estado">
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraíma</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                        <div style="clear: both">
+                        </div>
+                        <label for="cep" style="width:90px">CEP</label>
+                        <input name="cep" id="cep" value="" type="text"/><br>
+                        <label for="qtpessoas" style="width:90px">Qt. Pessoas</label>
+                        <input name="qtpessoas" id="qtpessoas" value="" type="text"/><br>
+                        <label for="qtmenores" style="width:90px">Qt. Menores</label>
+                        <input name="qtmenores" id="qtmenores" value="" type="text"/><br>
+                        <label for="distancia" style="width:90px">Distância</label>
+                        <input name="distancia" id="distancia" value="" type="text"/><br>
+                        <label for="obs" style="width:90px">Observação:</label>
+                        <textarea name="textarea" id="obs"> </textarea>
+                        <input id="id" value="" type="hidden" disabled="true" hidden="true"/><br>
+                    </fieldset>
+                </div>
+                <div data-position="inline" style="width:100%; background-color:gray;">
+                    <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Novo" onclick="onNew()">
+                    <input type="button" class="ui-btn-right" data-theme="b" name="create" value="Salvar" onclick="onInsert()">
+                    <input type="button" class="ui-btn-right" data-theme="b" id="btnAtualizar" value="Atualizar" onclick="onUpdate()">
+                    <input type="button" class="ui-btn-right" data-theme="b" id="btnExcluir" value="Excluir" onclick="onDelete()">
+                    <input type="button" class="ui-btn-right" data-theme="c" id="btnLocUsu" value="Calcular Distância" onclick="onCalcular()">
+                    <input type="button" class="ui-btn-right" data-theme="c" id="btnCapturar" value="Capturar" onclick="capturePhoto()">
+                  <!--  <a data-role="button" class="ui-btn-right" data-theme="c" href="#camera">Câmera</a> -->
+                </div>
+            </form>
+		<br>
+		<h3>Lista de usuários cadastrados:</h3>
+		<ul id="itemData" style="cursor:pointer;">
+		  <li id="2" class="data" onclick="onSelect(this)">teste x 44</li>
+		  <li id="3" class="data" onclick="onSelect(this)">teste x 44</li>
+		</ul>
+		<br>
+		<div id="status" style="background-color:blue; color: red; position:absolute; width:1410px">
+		</div> <br/>
+		<table id="tblList"> </table>
+    </div>
+		<div  data-role="footer" data-theme="b">
+			<a href= "#page3" data-transition="flip">Mauricio Vicente</a>
+		</div>
+	</div>
+    
+
+<!--===============================================================================================================-->
+	<div data-role="page" data-title="Camera" id="camera" data-theme="b">
+
+		<div data-role="header" data-theme="a">
+			<a href="#page1" data-rel="back">Voltar</a>
+			<h5>
+				Capturar Imagem
+			</h5>
+			<a href="#principal" data-icon="home" data-transition="flip"> Principal </a>
+		</div>
+		<div data-role="content" align="center"><br><br>
+               <div data-position="inline" style="width:100%; background-color:gray;">
+                   <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Capturar foto" onclick="capturePhoto();">
+               <!--    <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Capturar foto editável" onclick="capturePhotoEdit();"> -->
+                   <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Foto da biblioteca" onclick="getPhoto(pictureSource.PHOTOLIBRARY);">
+                   <input type="button" class="ui-btn-right" data-theme="b" name="novo" value="Foto do álbum" onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">
+               </div>
+               <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+               <img style="display:none;" id="largeImage" src="" />
+		</div>
+    </div>
+			
+
+
+<!--===============================================================================================================-->
+		<div data-role="page" data-title="Sobre" id="page3" data-theme="b">
+		
+			<div data-role="header" data-theme="a">
+				<a href="#page1" data-rel="back">Voltar</a> 
+				<h5>
+					IFC - Instituto Federal Catatinense - Campus Camboriú
+				</h5>
+				<a href="#principal" data-icon="home" data-transition="flip"> Principal </a>
+			</div>
+			<div data-role="content" align="center"><br><br><br><br><br><br><br>
+				<div class="ui-grid-a" style="width: 500px;">
+					<div class="ui-block-a" style = "height: 30px; width: 100px"><div class="ui-bar ui-bar-d" align="left">Aluno:</div></div>
+					<div class="ui-block-b" style = "height: 30px; width: 400px"><div class="ui-bar ui-bar-d" align="left">Mauricio Vicente</div></div>
+					<div class="ui-block-a" style = "height: 30px; width: 100px"><div class="ui-bar ui-bar-d" align="left">Curso:</div></div>
+					<div class="ui-block-b" style = "height: 30px; width: 400px"><div class="ui-bar ui-bar-d" align="left">Tecnologia de Sistemas para Internet</div></div>
+					<div class="ui-block-a" style = "height: 30px; width: 100px"><div class="ui-bar ui-bar-d" align="left">Disciplina:</div></div>
+					<div class="ui-block-b" style = "height: 30px; width: 400px"><div class="ui-bar ui-bar-d" align="left">Progamação para Dispositivos Móveis</div></div>
+					<div class="ui-block-a" style = "height: 30px; width: 100px"><div class="ui-bar ui-bar-d" align="left">Professor:</div></div>
+					<div class="ui-block-b" style = "height: 30px; width: 400px"><div class="ui-bar ui-bar-d" align="left">Angelo Frozza</div></div>
+					<div class="ui-block-a" style = "height: 30px; width: 100px"><div class="ui-bar ui-bar-d" align="left">Turma:</div></div>
+					<div class="ui-block-b" style = "height: 30px; width: 400px"><div class="ui-bar ui-bar-d" align="left">TSI11</div></div>
+				</div>
+			</div>
+			<div data-role="footer" data-position="fixed" data-theme="b">
+				<h3>
+					© 2013
+				</h3>
+			</div>
+		</div>
+    </body>
+</html>	
